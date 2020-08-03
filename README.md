@@ -5,8 +5,8 @@ Welcome to the Python client library documentation for the [Covid County Data](h
 
 ## Installation
 
-The `covidcountydata` Python package is availabe on the
-[Python Package Index (pypi)](https://pypi.org/) and can be installed with `pip`
+The `covidcountydata` Python package is available on the
+[Python Package Index (pypi)](https://pypi.org/) and can be installed with `pip`.
 
 ```python
 pip install covidcountydata
@@ -39,7 +39,7 @@ You will be prompted for your email address. After entering a valid email addres
 an API key, store it on your machine, and automatically apply it to all future requests made from
 Python to our servers.
 
-If at any time you would like to remove your API key, please delete the file ~/.covidcountydata/apikey
+If at any time you would like to remove your API key, please delete the file `~/.covidcountydata/apikey`.
 
 
 ## Data
@@ -47,7 +47,7 @@ If at any time you would like to remove your API key, please delete the file ~/.
 
 ### Datasets
 
-You can see a list of the available datasets in our API from the Python library by doing
+You can see a list of the available datasets in our API from the Python library by doing:
 
 ```python
 from covidcountydata import Client
@@ -65,7 +65,7 @@ For more information on each of these datasets, we recommend that you visit our
 Many of the datasets in our database are indexed by one or more common "keys". These keys are:
 
 - `vintage`: The date and time that the data was downloaded into our database. We collect this
-  because of the rapidly evolving nature of the -- It allows us to have a record of when data was
+  because of the rapidly evolving nature of COVID-19 -- It allows us to have a record of when data was
   changed/corrected/updated.
 - `dt`: The date and time that an observation corresponds to. For series like COVID tests
   administered this may a daily frequency, but, for others like unemployment it may be a weekly or
@@ -83,7 +83,7 @@ Requesting data using the Python client library involves three steps:
 
 #### 1. Create a client
 
-To create a client, use the `Client` function
+To create a client, create a `Client` class.
 
 ```python
 from covidcountydata import Client
@@ -91,22 +91,22 @@ from covidcountydata import Client
 c = Client()
 ```
 
-You can optionally pass in an API key if you have one (see the section on API keys)
+You can optionally pass in an API key if you have one (see the section on API keys).
 
 ```python
 c = Client("my api key")
 ```
 
 If you have previously registered for an API key on your current machine, it will be loaded and
-used automatically for you
+used automatically for you.
 
 In practice you should rarely need to pass the API key by hand unless you are loading the key from
-an environment variable or another source
+an environment variable or another source.
 
 
 #### 2. Build a request
 
-Each of the datasets in the API have an associated method
+Each of the datasets in the API have an associated method.
 
 To add datasets to the current request, call the `Client.dataset()`method. For example, to add
 the `covid_us` dataset to the request, you would call:
@@ -116,14 +116,14 @@ c.covid_us(state="CA")
 ```
 
 If you wanted to add another dataset, such as `demographics`, you would simply call that method as
-well
+well.
 
 ```python
 c.demographics()
 ```
 
 You can see that the printed form of the client is updated to show you what the current request
-looks like by printing the current client
+looks like by printing the current client.
 
 ```python
 print(c)
@@ -133,7 +133,7 @@ To clear the current request, use `c.reset()`:
 
 Since each dataset will build up a request for the client and return the client itself, we can
 chain together multiple requests. For example, rather than doing the separate commands from above,
-we could have done
+we could have done.
 
 ```python
 c.covid_us(state="CA").demographics()
@@ -166,7 +166,7 @@ To fetch the data, call the `fetch` method from the client.
 df = c.fetch()
 ```
 
-Note that after a successfuly request, the client is reset so there are no "built-up" requests
+Note that after a successfully request, the client is reset so there are no "built-up" requests
 remaining.
 
 
@@ -177,7 +177,7 @@ We provide a few simple examples here in the README, but you can find additional
 
 **Simple Example: Single dataset for all FIPS**
 
-The example below loads all within county mobility data
+The example below loads all within county mobility data.
 
 ```python
 import covidcountydata as ccd
@@ -192,7 +192,7 @@ df = c.fetch()
 
 The example below loads just demographic information for Travis County in Texas.
 
-Notice that we can select a particular geography by specifying the fips code. We can do similar things for any of they keys listed previously.
+Notice that we can select a particular geography by specifying the fips code. We can do similar things for any of the keys listed previously.
 
 ```python
 c = ccd.Client()
