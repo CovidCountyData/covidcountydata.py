@@ -25,7 +25,7 @@ have information about our users and to see how they use the data for two reason
 We are grateful to everyone who is willing to register for and use their API key when interacting
 with our data.
 
-To register for an API key, you can register [on our website](https://covidcountydata.org/register)
+To register for an API key, you can register [on our website](https://covidcountydata.org#register)
 or from the Python package using the `register` method.
 
 ```python
@@ -57,7 +57,7 @@ print(c.datasets)
 ```
 
 For more information on each of these datasets, we recommend that you visit our
-[data documentation page](https://covidcountydata.org).
+[data documentation page](https://covidcountydata.org/data-api#rest).
 
 
 ### Data keys
