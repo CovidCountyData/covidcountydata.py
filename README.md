@@ -83,7 +83,7 @@ Requesting data using the Python client library involves three steps:
 
 #### 1. Create a client
 
-To create a client, create a `Client` class.
+To create a client, use the `Client` class.
 
 ```python
 from covidcountydata import Client
