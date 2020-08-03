@@ -1,88 +1,181 @@
-# covidcountydata.py
+# covidcountydata
 
-`covidcountydata` is a Python client for accessing the Covid County Data database
+Welcome to the Python client library documentation for the [Covid County Data](https://covidcountydata.org) (CCD) database.
 
-Links:
-
-- [Repository](https://github.com/CovidCountyData/covidcountydata.py)
-- [Website](https://covidcountydata.org/)
-
-## Covid County Data
-
-The Covid County Data (CCD) project is funded by [Schmidt Futures](https://schmidtfutures.com/) and seeks to simplify the data ingestion process for researchers and policy makers who are working to enact and understand COVID-19 related policies. We accomplish this goal in several ways:
-
-- Collect unique, hard-to-acquire, datasets that are not widely distributed
-- Aggregate data collected by other related organizations into a centralized database
-- Work with other related organizations to expand and improve their data collection processes
-- Build tools, such as this library and the [Julia](https://github.com/CovidCountyData/CovidCountyData.jl) and [R](https://github.com/CovidCountyData/covidcountydataR), to simplify the data ingestion process
-
-More information about our project and what data is collected can be found on our [website](https://covidcountydata.org/).
-
-We are always looking to hear from both those who would like to help us build CCD and those who would like use CCD. [Please reach out to us](https://covidcountydata.org/contact)!
 
 ## Installation
 
-This package is available on the [Python Package Index (pypi)](https://pypi.org/project/covidcountydata/) and can be installed by
+The `covidcountydata` Python package is availabe on the
+[Python Package Index (pypi)](https://pypi.org/) and can be installed with `pip`
 
-```bash
+```python
 pip install covidcountydata
 ```
 
+## API keys
 
-## Datasets
+Our data is free and open for anyone to use (and always will be). Our team agreed that this was
+central to our mission when we agreed to begin this project. However, we do find it useful to
+have information about our users and to see how they use the data for two reasons:
 
-You can always find the available datasets in the client object by writing:
+1. It helps us focus and improve the datasets that are seeing the most use.
+2. The number of users, as measured by active API keys, is one metric that we use to show that the
+   project is useful when we are discussing additional grant funding.
 
-```python3
-# NOTE: we assume you have aliased the covidcountydata import as
-#       ccd in future code examples
-import covidcountydata as ccd
+We are grateful to everyone who is willing to register for and use their API key when interacting
+with our data.
 
-c = ccd.Client()
+To register for an API key, you can register [on our website](https://covidcountydata.org/register)
+or from the Python package using the `register` method.
+
+```python
+from covidcountydata import Client
+
+c = Client()
+c.register()
+```
+
+You will be prompted for your email address. After entering a valid email address we will issue
+an API key, store it on your machine, and automatically apply it to all future requests made from
+Python to our servers.
+
+If at any time you would like to remove your API key, please delete the file ~/.covidcountydata/apikey
+
+
+## Data
+
+
+### Datasets
+
+You can see a list of the available datasets in our API from the Python library by doing
+
+```python
+from covidcountydata import Client
+
+c = Client()
 print(c.datasets)
 ```
 
-You can also find documentation for these datasets [online](https://covidcountydata.org/data-api). This documentation will include more detailed information about the variables included in a particular dataset, where the data comes from, and any caveats that you should be aware of. We encourage you to read about the data you use to ensure that it is appropriate for your intended analysis -- A failure to understand the data you work with guarantees the failure of any subsequent analysis.
+For more information on each of these datasets, we recommend that you visit our
+[data documentation page](https://covidcountydata.org).
 
 
 ### Data keys
 
-All of the data in our database is indexed by one or more common "keys". These keys are:
+Many of the datasets in our database are indexed by one or more common "keys". These keys are:
 
-- `vintage`: The date and time that the data was downloaded into our database. We collect this because of the rapidly eveolving nature of the data and it is important to have a record of when data was changed/corrected/updated.
-- `dt`: The date and time that an observation corresponds to. For series like COVID tests administered this may a daily frequency, but, for others like unemployment it may be a weekly or monthly frequency.
-- `fips`: The Federal Information Processing Standards number which is used to represent the state/county.
-- `meta_date`: For infrequently observed and slow moving data sets, such as demographics, we use the `meta_date` column rather than `dt` because we will associate the values from the `meta_date` with many values of `dt`.
+- `vintage`: The date and time that the data was downloaded into our database. We collect this
+  because of the rapidly evolving nature of the -- It allows us to have a record of when data was
+  changed/corrected/updated.
+- `dt`: The date and time that an observation corresponds to. For series like COVID tests
+  administered this may a daily frequency, but, for others like unemployment it may be a weekly or
+  monthly frequency.
+- `location`: A geographic identifier for the location. For the counties/states in the dataset,
+  this variable corresponds to the Federal Information Processing Standards number.
 
 Whenever two series with common keys are loaded together, they will be merged on their common keys.
 
-## API Keys
 
-The CCD data is publicly available and free of charge. We intend to keep it that way.
+### Requesting data
 
-We do have an API key system for a few reasons:
+Requesting data using the Python client library involves three steps:
 
-1. To understand usage patterns that might help us prioritize work going forward
-2. To understand the breadth of our user base. We want to make sure we are as helpful to as many groups as possible and keeping a rough idea of how many groups there are is a good benchmark!
 
-The CCD library can automatically handle API keys for you.
+#### 1. Create a client
 
-If opt in to using an API key, please run the `register` method on the client as shown below:
+To create a client, use the `Client` function
 
-```python3
-c = ccd.Client()
-c.register()
+```python
+from covidcountydata import Client
+
+c = Client()
 ```
 
-You will be prompted for your email address. After entering a valid email address we will issue an API key, store it on your machine, and automatically apply it to all future requests to our servers.
+You can optionally pass in an API key if you have one (see the section on API keys)
 
-If at any time you would like to remove your API key, please delete the file `~/.covidcountydata/apikey`
+```python
+c = Client("my api key")
+```
+
+If you have previously registered for an API key on your current machine, it will be loaded and
+used automatically for you
+
+In practice you should rarely need to pass the API key by hand unless you are loading the key from
+an environment variable or another source
+
+
+#### 2. Build a request
+
+Each of the datasets in the API have an associated method
+
+To add datasets to the current request, call the `Client.dataset()`method. For example, to add
+the `covid_us` dataset to the request, you would call:
+
+```python
+c.covid_us(state="CA")
+```
+
+If you wanted to add another dataset, such as `demographics`, you would simply call that method as
+well
+
+```python
+c.demographics()
+```
+
+You can see that the printed form of the client is updated to show you what the current request
+looks like by printing the current client
+
+```python
+print(c)
+```
+
+To clear the current request, use `c.reset()`:
+
+Since each dataset will build up a request for the client and return the client itself, we can
+chain together multiple requests. For example, rather than doing the separate commands from above,
+we could have done
+
+```python
+c.covid_us(state="CA").demographics()
+```
+
+**Filtering data**
+
+Each of the dataset functions has a number of filters that can be applied.
+
+These filters allow you to select certain rows and/or columns.
+
+For example, in the above example we had `c.covid_us(state="CA")`. This instructs the client to
+only fetch data for geographic regions that are in the state of California.
+
+**NOTE:** If a filter is passed to one dataset in the request but is applicable to other datasets
+in the request, it will be applied to *all* datasets.
+
+For example in `c.covid_us(state="CA").demographics()` we only specify a `state` filter on the
+`covid_us` dataset, but when the data is collected it will also be applied to `demographics`.
+
+We do this because we end up doing an inner join on all requested datasets, so when we filter the
+state in `covid_us` they also get filtered in `demographics`.
+
+
+#### 3. Fetch the data
+
+To fetch the data, call the `fetch` method from the client.
+
+```python
+df = c.fetch()
+```
+
+Note that after a successfuly request, the client is reset so there are no "built-up" requests
+remaining.
+
+
 
 ## Examples
 
 We provide a few simple examples here in the README, but you can find additional examples in the `examples` folder.
 
-### Simple Example: Single dataset for all FIPS
+**Simple Example: Single dataset for all FIPS**
 
 The example below loads all within county mobility data
 
@@ -94,7 +187,8 @@ c.mobility_devices()
 df = c.fetch()
 ```
 
-### Simple Example: Single dataset for single county
+
+**Simple Example: Single dataset for single county**
 
 The example below loads just demographic information for Travis County in Texas.
 
@@ -106,7 +200,8 @@ c.demographics(fips=48453)
 df = c.fetch()
 ```
 
-### Simple Example: Single dataset for all counties in a state
+
+**Simple Example: Single dataset for all counties in a state**
 
 The example below loads just demographic information for all counties in Texas.
 
@@ -119,7 +214,7 @@ df = c.fetch()
 ```
 
 
-### Intermediate Example: Multiple datasets for single county
+**Intermediate Example: Multiple datasets for single county**
 
 The example below loads covid and demographic data and showcases how to chain calls to multiple datasets together. It will automatically merge and return these datasets.
 
@@ -135,11 +230,8 @@ c = ccd.Client()
 df = c.fetch()
 ```
 
-### Intermediate Example: Multiple datasets for all counties within one state
 
-The example below
-
-### Advanced Example: Multiple datasets with multiple filters and variable selection
+**Advanced Example: Multiple datasets with multiple filters and variable selection**
 
 The example below loads data from three datasets for a particular FIPS code, using a particular date of demographics, and selects certain variables from the datasets.
 
