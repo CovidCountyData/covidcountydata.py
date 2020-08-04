@@ -196,7 +196,7 @@ Notice that we can select a particular geography by specifying the fips code. We
 
 ```python
 c = ccd.Client()
-c.demographics(fips=48453)
+c.demographics(location=48453)
 df = c.fetch()
 ```
 
@@ -224,7 +224,7 @@ Note that applying a filter to any of the datasets (in this case `fips=6037`) wi
 c = ccd.Client()
 (
     c
-    .covid(fips=6037)
+    .covid_us(location=6037)
     .demographics()
 )
 df = c.fetch()
@@ -239,8 +239,8 @@ The example below loads data from three datasets for a particular FIPS code, usi
 c = ccd.Client()
 (
     c
-    .economics(meta_date="2018-01-01", variable="GDP_All industry total")
-    .covid(fips=6037)
+    .economic_snapshots(variable="GDP_All industry total")
+    .covid_us(location=6037)
     .demographics(variable="Total population")
 )
 df = c.fetch()
