@@ -213,6 +213,28 @@ c.demographics(state=48)
 df = c.fetch()
 ```
 
+**Simple Example: COVID data since July 1, 2020 for counties in Georgia**
+
+The example below shows how to filter on both a state and a range of dates, fetching only data for July 1st onwards.
+
+```python
+c = ccd.Client()
+c.covid_us(state="GA", dt=">=2020-07-01")
+df = c.fetch()
+```
+
+
+**Intermediate Example: COVID data since July 1, 2020 for counties in Georgia with county info**
+
+This is the same example as above, but we also add on the `us_counties` endpoint. This will cause the returned DataFrame to have
+information on the counties including county name, state name, county area, county latitude, and county longitude.
+
+```python
+c = ccd.Client()
+c.covid_us(state="GA", dt=">=2020-07-01").us_counties()
+df = c.fetch()
+```
+
 
 **Intermediate Example: Multiple datasets for single county**
 
