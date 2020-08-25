@@ -2,6 +2,7 @@ import io
 import pathlib
 from typing import Any, Dict, List, Optional, Union
 
+import numpy as np
 import pandas as pd
 import requests
 import us
@@ -325,6 +326,13 @@ class Client:
         for col in ["dt", "meta_date", "vintage"]:
             if col in list(df):
                 df[col] = pd.to_datetime(df[col])
+
+        cols = list(df.columns)
+        if "fips" in cols and "location" in cols:
+            loc_str = df["location"].astype(str).str
+            df["fips"] = np.where(
+                df["location"] < 100, loc_str.zfill(2), loc_str.zfill(5)
+            )
 
         return df
 
