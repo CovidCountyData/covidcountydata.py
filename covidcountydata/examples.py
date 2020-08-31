@@ -94,3 +94,10 @@ def single_dataset_variableselect(c=ccd.Client()):
     )
     df = c.fetch()
     return df
+
+
+def covid_sources(c=ccd.Client()):
+    """
+    Fetch source for all covid variables
+    """
+    return c.covid_sources().fetch()
