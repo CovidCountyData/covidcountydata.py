@@ -7,6 +7,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 BASE_URL = "https://api.covidcountydata.org"
+POSTGREST_ARGS = {"select", "order", "Range", "Range-Unit", "offset", "limit", "Prefer"}
 
 
 def setup_session() -> requests.Session:
@@ -23,7 +24,9 @@ def setup_session() -> requests.Session:
     return http
 
 
-def create_filter_rhs(x: Any) -> str:
+def create_filter_rhs(x: Any, k=None) -> str:
+    if k is not None and k in POSTGREST_ARGS:
+        return x
     inequalities = {">": "gt", "<": "lt", "!=": "neq"}
     if isinstance(x, (list, tuple, set)):
         # use in
@@ -80,7 +83,8 @@ def _create_query_string(path: str, filters: Dict[str, Any]) -> str:
     """
     Given a path and filters to apply to that path, construct a query string
     """
-    prepped_filters = {k: create_filter_rhs(v) for k, v in filters.items()}
+
+    prepped_filters = {k: create_filter_rhs(v, k) for k, v in filters.items()}
     query = BASE_URL + "/" + path
     if len(prepped_filters) > 0:
         query += "?" + urllib.parse.urlencode(prepped_filters)
