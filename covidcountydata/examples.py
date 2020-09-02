@@ -91,7 +91,7 @@ def single_dataset_variableselect(c=ccd.Client()):
             "Mean household income",
             "Percent of civilian population with no health insurance",
         ],
-        limit=100
+        limit=100,
     )
     df = c.fetch()
     return df
