@@ -349,13 +349,19 @@ class Client:
             print("You have no requests built up! Try adding a dataset")
             return None
         filters = self._unionize_filters()
+        if "covid_sources" in filters and len(filters) > 1:
+            raise ValueError(
+                "covid_sources request cannot be combined with other requests"
+            )
         query_strings = {k: _create_query_string(k, v) for k, v in filters.items()}
         return query_strings
 
     def fetch(self) -> pd.DataFrame:
         query_strings = self._get_urls()
         dfs = self._run_queries(query_strings)
-        wide_dfs = [_reshape_df(v) for v in dfs.values()]
+        wide_dfs = [
+            _reshape_df(v) if k != "covid_sources" else v for k, v in dfs.items()
+        ]
         output = _combine_dfs(wide_dfs)
 
         self.reset()
