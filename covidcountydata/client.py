@@ -17,6 +17,18 @@ from .utils import (
 )
 
 
+def get_spec():
+    sess = setup_session()
+    res = sess.get("https://clean-swagger-inunbrtacq-uk.a.run.app")
+    if not res.ok:
+        msg = "Could not request the API structure. Please try again!"
+        raise NetworkError(res, msg)
+    return res.json()
+
+
+SPEC = get_spec()
+
+
 class NetworkError(Exception):
     def __init__(self, res: requests.Response, msg: str):
         full_msg = (
@@ -146,11 +158,7 @@ class Client:
         self.sess = setup_session()
         self._set_key(apikey)
         self._counties = None
-        res = self.sess.get(BASE_URL + "/swagger.json")
-        if not res.ok:
-            msg = "Could not request the API structure. Please try again!"
-            raise NetworkError(res, msg)
-        self._spec = res.json()
+        self._spec = SPEC
 
         if self.key is None:
             msg = (
@@ -159,6 +167,11 @@ class Client:
                 "\nYou can do this by running the code `ccd.Client().register()"
             )
             print(msg)
+
+    def update_spec(self):
+        global SPEC
+        SPEC = get_spec()
+        self._spec = SPEC
 
     ## county/state map
     @property
