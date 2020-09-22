@@ -102,3 +102,30 @@ def covid_sources(c=ccd.Client()):
     Fetch source for all covid variables
     """
     return c.covid_sources(limit=100).fetch()
+
+
+def covid_start_date(c=ccd.Client()):
+    "fetch all covid for Orange County FL since Sep 1, 2020"
+    return c.covid_us(location=12045, dt={"start": "2020-09-01"}).fetch()
+
+
+def covid_end_date(c=ccd.Client()):
+    "Fetch all covid for Orange County FL up to April 1, 2020"
+    return c.covid_us(location=12045, dt={"end": "2020-04-01"}).fetch()
+
+
+def covid_start_end_date(c=ccd.Client()):
+    "Fetch all covid for Orange County FL for august 2020"
+    return c.covid_us(
+        location=12045, dt={"start": "2020-08-01", "end": "2020-08-31"}
+    ).fetch()
+
+
+def covid_start_date_string(c=ccd.Client()):
+    "fetch all covid for Orange County FL since Sep 1, 2020"
+    return c.covid_us(location=12045, dt=">=2020-09-01").fetch()
+
+
+def covid_end_date_string(c=ccd.Client()):
+    "Fetch all covid for Orange County FL up to April 1, 2020"
+    return c.covid_us(location=12045, dt="<=2020-04-01").fetch()
